@@ -19,12 +19,13 @@ namespace ConsoleApp1
     {
         static String[] GetRight(string eqn)
         {
-            eqn =  eqn.Substring(eqn.IndexOf("=") + 1);
+            eqn = eqn.Substring(eqn.IndexOf("=") + 1);
             int numPlus = NumOcc(eqn, "+");
             string[] s = new string[numPlus + 1];
             eqn = eqn.Trim();
             s = eqn.Split('+');
-            for(int i = 0; i< s.Length; i++) {
+            for (int i = 0; i < s.Length; i++)
+            {
                 s[i] = s[i].Trim();
             }
             return s;
@@ -47,7 +48,7 @@ namespace ConsoleApp1
         static int NumOcc(string s, string c)
         {
             int count = 0;
-            for(int i = 0; i < s.Length; i++)
+            for (int i = 0; i < s.Length; i++)
             {
                 if (s.ElementAt(i).Equals(c))
                 {
@@ -56,9 +57,9 @@ namespace ConsoleApp1
             }
             return count;
         }
-        
+
         static string[,] Parse(string s)
-        {  
+        {
             char[] chem = s.ToCharArray();
             int[] numInChem = new int[s.Length];
             string[] elementsUsed = new string[s.Length];
@@ -138,9 +139,9 @@ namespace ConsoleApp1
 
         private static int indexOf(string[,] s1, string s2)
         {
-            for (int i = 0; i < s1.Length/2; i++)
+            for (int i = 0; i < s1.Length / 2; i++)
             {
-                if (s1[0,i].Equals(s2))
+                if (s1[0, i].Equals(s2))
                 {
                     return i;
                 }
@@ -183,6 +184,10 @@ namespace ConsoleApp1
             double[] vector = new double[MyGLobals.elements.Count + 1];
             vector[vector.Length - 1] = 1;
 
+
+
+
+
             Vector<double> aug = Vector<double>.Build.Dense(vector);
             Vector<double> x = m.Solve(aug);
             int[] solution = new int[x.Count];
@@ -194,7 +199,7 @@ namespace ConsoleApp1
                 if (lowest > x.ElementAt(i))
                     lowest = x.ElementAt(i);
             }
-            
+
             for (int i = 0; i < solution.Length; i++)
             {
                 temp = (x.ElementAt(i) / lowest);
@@ -266,14 +271,170 @@ namespace ConsoleApp1
             return InsertCoeff(Reduce(matrix), left, right);
         }
 
+        static double[,] SwapRows(double[,] matrix, int r1, int r2)
+        {
+            //int[] temp = new int[matrix.GetLength(2)];
+            double temp;
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                temp = matrix[r1, i];
+                matrix[r1, i] = matrix[r2, i];
+                matrix[r2, i] = temp;
+            }
+            return matrix;
+        }
+
+        static double[,] FindAndSwap(double[,] matrix, int currentRow)
+        {
+            int pos = currentRow;
+            int currentRowLeadingCoeffPos = -1;
+            int first = matrix.GetLength(1);
+            int rowToSwitch = currentRow;
+           // Console.WriteLine("CR " + currentRow);
+            //for(int i = currentRow; i < matrix.GetLength(1); i++)
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                if(Math.Abs(matrix[currentRow,i]) > 0.001)
+                {
+                    currentRowLeadingCoeffPos = i;
+                    //Console.WriteLine("CRLCP " + currentRowLeadingCoeffPos + " row " + i + " v " + matrix[currentRow, i]);
+                    break;
+                }
+            }
+            if(currentRowLeadingCoeffPos > currentRow)
+            {
+                //Console.WriteLine("TEST CRLCP " + currentRowLeadingCoeffPos + " row " + currentRow );
+                for (int i = currentRow; i < matrix.GetLength(0); i++)
+                {
+                    for (int j = 0; j < matrix.GetLength(1); j++)
+                    {
+                        if (matrix[i, j] != 0)
+                        {
+                            currentRowLeadingCoeffPos = j;
+                            break;
+                        }
+                    }
+                    if(currentRowLeadingCoeffPos < first)
+                    {
+                        first = currentRowLeadingCoeffPos;
+                        rowToSwitch = i;
+                    }
+                }
+            }
+
+            return SwapRows(matrix,currentRow, rowToSwitch);
+        }
+
+        static double LCMLeadingNum(double[,] matrix, int row1, int row2)
+        {
+            double lcm = 0;
+            int posLCR1 = 0;
+            int posLCR2 = 0;
+
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                if (Math.Abs(matrix[row1, i]) > 0.001)
+                {
+                    posLCR1 = i;
+                    break;
+                }
+            }
+            //for (int i = 0; i < matrix.GetLength(1); i++)
+            //{
+            //    if (matrix[row2, i] != 0)
+            //    {
+            //        posLCR2 = i;
+            //        break;
+            //    }
+            //}
+            if(Math.Abs(matrix[row2, posLCR1]) < 0.001)
+            {
+                return 0;
+            }
+            lcm = matrix[row1, posLCR1] * matrix[row2, posLCR2];
+            double gcd = GCD(matrix[row1, posLCR1], matrix[row2, posLCR2]);
+            return lcm / gcd;
+        }
+
+        static double GCD(double x, double y)
+        {
+            double a = Math.Abs(x);
+            double b = Math.Abs(y);
+            double c;
+            while (b > 0.001)
+           // while (a != 0 && b != 0)
+            {
+                c = a % b;
+                a = b;
+                b = c;
+                //if (a > b)
+                //{
+                //    a %= b;
+                //}
+                //else
+                //{
+                //    b %= a;
+                //}
+                //Console.WriteLine("a " + a + " b " + b);
+            }
+            return a;
+        }
+
+        static double[,] RowAddScalar(double[,] matrix, int sourceRow, int destRow, double scalar)
+        {
+            for (int i = 0; i < matrix.GetLength(1); i++)
+            {
+                matrix[destRow, i] += matrix[sourceRow, i] * scalar;
+            }
+            return matrix;
+        }
+
+        static double[,] ToRowEchelonForm(double[,] matrix)
+        {
+            double scalar = 0;
+            for(int i = 0; i < matrix.GetLength(0); i++)
+            {
+                matrix = FindAndSwap(matrix, i);
+                for(int j = i + 1; j < matrix.GetLength(0); j++)
+                {
+                    scalar = LCMLeadingNum(matrix, i, j);
+                    matrix = RowAddScalar(matrix, i, j, -scalar);
+                }
+            }
+            return matrix;
+        }
+
         static void Main(string[] args)
         {
             //String s = "CO2 + H2O2 = C6H12O6 + O2";
-            String s = "O2 + H2 = H2O6";
-            Console.WriteLine("Input: \n" + s);
+            //String s = "O2 + H2 = H2O6";
+            //Console.WriteLine("Input: \n" + s);
 
-            String answer = Solve(s);
-            Console.WriteLine("\nOutput: \n" + answer);
+            //String answer = Solve(s);
+            //Console.WriteLine("\nOutput: \n" + answer);
+            Console.WriteLine("Input: \n");
+            //double[,] matrix = { { 1, 0, -6, 0 ,0 }, { 2, 1, -6, -2, 0 }, { 0, 2, -12, 0, 0 }, { 1, 0, 0, 0, 1 } };
+            double[,] matrix = { { 0, 2, -12, 0, 0 }, { 2, 1, -6, -2, 0 }, { 1, 0, -6, 0, 0 }, { 1, 0, 0, 0, 1 } };
+            //matrix = FindAndSwap(matrix,0);
+
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
+            matrix = ToRowEchelonForm(matrix);
+            Console.WriteLine("\nOutput: \n");
+            for (int i = 0; i < matrix.GetLength(0); i++)
+            {
+                for (int j = 0; j < matrix.GetLength(1); j++)
+                {
+                    Console.Write(matrix[i, j] + " ");
+                }
+                Console.WriteLine();
+            }
 
             Console.ReadKey();
 
