@@ -176,7 +176,7 @@ namespace ConsoleApp1
             //DisplayMatrix(matrix);
             //Console.WriteLine("//////////////////////");
             return matrix;
-        }//change once GJ is done
+        }
 
         static double[] GetAdjunctCol(double[,] matrix)
         {
@@ -250,7 +250,7 @@ namespace ConsoleApp1
             return lcm / gcd;
         }
 
-        //FIX FINAL IMPLEMENTATION
+        
         static string InsertCoeff(int[] answer, String[] left, String[] right)
         {
             StringBuilder final = new StringBuilder();
@@ -290,7 +290,7 @@ namespace ConsoleApp1
                 final.Append(right[i]);
             }
             return final.ToString();
-        }//FIX FINAL IMPLEMENTATION
+        }
 
         static string Solve(string eqn)
         {
@@ -606,6 +606,7 @@ namespace ConsoleApp1
                 Console.WriteLine();
             }
         }
+
         static void Main(string[] args)
         {
             String s1 = "CO2 + H2O = C6H12O6 + O2";
@@ -615,26 +616,26 @@ namespace ConsoleApp1
             String s5 = "O2 + H2 = H2O6";
             String answer;
 
-            Console.WriteLine("Input: \n" + s1);
+            Console.WriteLine("\nInput: \n" + s1);
             answer = Solve(s1);
-            Console.WriteLine("\nOutput: \n" + answer);
+            Console.WriteLine("Output: \n" + answer);
 
-            Console.WriteLine("Input: \n" + s2);
+            Console.WriteLine("\nInput: \n" + s2);
             answer = Solve(s2);
-            Console.WriteLine("\nOutput: \n" + answer);
+            Console.WriteLine("Output: \n" + answer);
 
-            Console.WriteLine("Input: \n" + s3);
+            Console.WriteLine("\nInput: \n" + s3);
             answer = Solve(s3);
-            Console.WriteLine("\nOutput: \n" + answer);
+            Console.WriteLine("Output: \n" + answer);
 
 
-            //Console.WriteLine("Input: \n" + s4);
+            //Console.WriteLine("\nInput: \n" + s4);
             //answer = Solve(s4);
-            //Console.WriteLine("\nOutput: \n" + answer);
+            //Console.WriteLine("Output: \n" + answer);
 
-            //Console.WriteLine("Input: \n" + s5);
+            //Console.WriteLine("\nInput: \n" + s5);
             //answer = Solve(s5);
-            //Console.WriteLine("\nOutput: \n" + answer);
+            //Console.WriteLine("Output: \n" + answer);
 
 
 
